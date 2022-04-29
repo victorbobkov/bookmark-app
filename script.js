@@ -6,7 +6,7 @@ const websiteNameEl = document.getElementById('website-name')
 const websiteUrlEl = document.getElementById('website-url')
 const bookmarksContainer = document.getElementById('bookmarks-container')
 
-let bookmarks = []
+let bookmarks = {}
 
 // Show Modal, Focus on Input
 const showModal = () => {
@@ -40,8 +40,10 @@ const buildBookmarks = () => {
    // Remove all bookmark elements
    bookmarksContainer.textContent = ''
    // Build items
-   bookmarks.forEach((bookmark) => {
-      const {name, url} = bookmark
+   Object.keys(bookmarks).forEach((id) => {
+
+      const {name, url} = bookmarks[id]
+
       // Item
       const item = document.createElement('div')
       item.classList.add('item')
@@ -49,7 +51,7 @@ const buildBookmarks = () => {
       const closeIcon = document.createElement('i')
       closeIcon.classList.add('fas', 'fa-times')
       closeIcon.setAttribute('title', 'Delete Bookmark')
-      closeIcon.setAttribute('onclick', `deleteBookmark('${ url }')`)
+      closeIcon.setAttribute('onclick', `deleteBookmark('${ id }')`)
       // Favicon / Link Container
       const linkInfo = document.createElement('div')
       linkInfo.classList.add('name')
@@ -75,26 +77,24 @@ const fetchBookmarks = () => {
    if (localStorage.getItem('bookmarks')) {
       bookmarks = JSON.parse(localStorage.getItem('bookmarks'))
    } else {
-      // Create bookmarks array in localStorage
-      bookmarks = [
-         {
-            name: 'Google',
-            url: 'https://google.com',
-         },
-      ]
+      // Create bookmarks object in localStorage
+      const id = `https://google.com`
+      bookmarks[id] = {
+         name: 'Google',
+         url: 'https://google.com',
+      }
+
       localStorage.setItem('bookmarks', JSON.stringify(bookmarks))
    }
    buildBookmarks()
 }
 
 // Delete Bookmark
-const deleteBookmark = (url) => {
+const deleteBookmark = id => {
    // Loop through the bookmarks array
-   bookmarks.forEach((bookmark, i) => {
-      if (bookmark.url === url) {
-         bookmarks.splice(i, 1)
-      }
-   })
+   if (bookmarks[id]) {
+      delete bookmarks[id]
+   }
    // Update bookmarks array in localStorage, re-populate DOM
    localStorage.setItem('bookmarks', JSON.stringify(bookmarks))
    fetchBookmarks()
@@ -104,8 +104,7 @@ const storeBookmark = e => {
    e.preventDefault()
    const nameValue = websiteNameEl.value
    let urlValue = websiteUrlEl.value
-   // Add 'https://' if not there
-   if (!urlValue.includes('https://') && !urlValue.includes('http://')) {
+   if (!urlValue.includes('http://', 'https://')) {
       urlValue = `https://${ urlValue }`
    }
    // Validate
@@ -117,7 +116,7 @@ const storeBookmark = e => {
       name: nameValue,
       url: urlValue,
    }
-   bookmarks.push(bookmark)
+   bookmarks[urlValue] = bookmark
    // Set bookmarks in localStorage, fetch, reset input fields
    localStorage.setItem('bookmarks', JSON.stringify(bookmarks))
    fetchBookmarks()
