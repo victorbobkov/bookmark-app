@@ -9,7 +9,7 @@ const bookmarksContainer = document.getElementById('bookmarks-container')
 let bookmarks = []
 
 // Show Modal, Focus on Input
-function showModal() {
+const showModal = () => {
    modal.classList.add('show-modal')
    websiteNameEl.focus()
 }
@@ -20,7 +20,7 @@ modalClose.addEventListener('click', () => modal.classList.remove('show-modal'))
 window.addEventListener('click', (e) => (e.target === modal ? modal.classList.remove('show-modal') : false))
 
 // Validate Form
-function validate(nameValue, urlValue) {
+const validate = (nameValue, urlValue) => {
    const expression = /(https)?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/g
    const regex = new RegExp(expression)
    if (!nameValue || !urlValue) {
@@ -36,7 +36,7 @@ function validate(nameValue, urlValue) {
 }
 
 // Build Bookmarks
-function buildBookmarks() {
+const buildBookmarks = () => {
    // Remove all bookmark elements
    bookmarksContainer.textContent = ''
    // Build items
@@ -70,7 +70,7 @@ function buildBookmarks() {
 }
 
 // Fetch bookmarks
-function fetchBookmarks() {
+const fetchBookmarks = () => {
    // Get bookmarks from localStorage if available
    if (localStorage.getItem('bookmarks')) {
       bookmarks = JSON.parse(localStorage.getItem('bookmarks'))
@@ -88,7 +88,7 @@ function fetchBookmarks() {
 }
 
 // Delete Bookmark
-function deleteBookmark(url) {
+const deleteBookmark = (url) => {
    // Loop through the bookmarks array
    bookmarks.forEach((bookmark, i) => {
       if (bookmark.url === url) {
@@ -100,7 +100,7 @@ function deleteBookmark(url) {
    fetchBookmarks()
 }
 
-function storeBookmark(e) {
+const storeBookmark = e => {
    e.preventDefault()
    const nameValue = websiteNameEl.value
    let urlValue = websiteUrlEl.value
